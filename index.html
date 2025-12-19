@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landbot Generator (Final)</title>
+    <title>Landbot Generator (Full Screen Fix)</title>
     
     <!-- Editor.js & Plugins -->
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.28.0"></script>
@@ -20,81 +21,29 @@
         /* GLOBAL RESETS */
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; margin: 0; }
-        
-        /* CONTAINER */
-        .container { 
-            max-width: 1200px; 
-            width: 95%; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 40px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-            padding-bottom: 100px; 
-        }
-        
+        .container { max-width: 1200px; width: 95%; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding-bottom: 100px; }
         h1 { text-align: center; color: #2c3e50; margin: 0 0 10px 0; }
         p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 40px; }
-
-        /* SECTION HEADERS */
-        h2 { 
-            font-size: 16px; 
-            border-bottom: 2px solid #3498db; 
-            padding-bottom: 10px; 
-            margin-top: 40px; 
-            color: #3498db; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-
-        /* CARDS */
-        .card { 
-            background: #fff; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            border-left: 5px solid #ccc; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            overflow: visible; 
-            position: relative;
-            z-index: 1;
-        }
+        h2 { font-size: 16px; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 40px; color: #3498db; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: visible; position: relative; z-index: 1; transition: all 0.3s ease; }
         .card.link-c { border-left-color: #3498db; }
         .card.modal-c { border-left-color: #9b59b6; }
-
-        /* CARD HEADER */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f9f9f9;
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            border-radius: 8px 8px 0 0;
-        }
-        
+        .card.card-hidden { display: none; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 10px 15px; border-bottom: 1px solid #eee; border-radius: 8px 8px 0 0; }
         .card-body { padding: 15px; }
-
-        /* INPUTS */
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 200px; 
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: inherit;
-        }
+        .card-title-badge { font-weight: bold; font-size: 13px; color: #555; display: flex; align-items: center; gap: 5px; }
+        .d-title { color: #333; font-weight: 800; border-bottom: 1px dashed #ccc; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr 200px; gap: 15px; margin-bottom: 10px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: inherit; }
         .form-control:focus { border-color: #3498db; outline: none; }
         label { display: block; font-size: 12px; font-weight: bold; color: #777; margin-bottom: 5px; }
-
-        /* BUTTONS */
+        .toggle-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #3498db; }
+        input:checked + .slider:before { transform: translateX(20px); }
         button { cursor: pointer; border: none; border-radius: 4px; font-weight: bold; transition: 0.2s; }
         .btn-add { background: #2ecc71; color: white; padding: 8px 15px; font-size: 12px; }
         .btn-add:hover { background: #27ae60; }
@@ -103,60 +52,76 @@
         .btn-gen { background: #3498db; color: white; width: 100%; font-size: 16px; padding: 15px; margin-top: 30px; }
         .btn-gen:hover { background: #2980b9; }
         .btn-copy { background: #34495e; color: white; width: 100%; padding: 12px; margin-top: 10px; }
-
-        /* DRAG STYLES */
-        .drag-area { display: flex; align-items: center; gap: 10px; cursor: grab; }
-        .drag-icon { color: #bbb; font-size: 18px; }
-        .token-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
-        .token-badge.link { background: #3498db; }
-        .token-badge.modal { background: #9b59b6; }
-
-        /* SENTENCE EDITOR */
-        .sentence-editor {
-            width: 100%; min-height: 100px; border: 2px solid #ddd; border-radius: 6px; padding: 15px; font-size: 15px; line-height: 1.6; outline: none;
-        }
+        .btn-test { background: #9b59b6; color: white; padding: 8px 20px; font-size: 14px; margin-left: 10px;}
+        .btn-test:hover { background: #8e44ad; }
+        .sentence-editor { width: 100%; min-height: 100px; border: 2px solid #ddd; border-radius: 6px; padding: 15px; font-size: 15px; line-height: 1.6; outline: none; position: relative; }
         .sentence-editor:focus { border-color: #3498db; }
-        
-        .chip {
-            display: inline-block; padding: 2px 8px; border-radius: 4px; margin: 0 2px; font-weight: bold; font-size: 13px; cursor: grab; user-select: none;
-        }
+        .chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; margin: 0 2px; font-weight: bold; font-size: 13px; user-select: none; vertical-align: middle; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .chip.link { background: #eaf2f8; color: #2980b9; border: 1px solid #aed6f1; }
         .chip.modal { background: #f4ecf7; color: #8e44ad; border: 1px solid #d2b4de; }
-
-        /* EDITOR JS FIXES */
-        .editor-container {
-            border: 1px solid #eee;
-            background: #fafafa;
-            border-radius: 4px;
-            padding: 10px 30px 10px 10px; 
-            min-height: 150px;
-            margin-top: 10px;
-            overflow: visible !important; 
-            position: relative;
-            z-index: 10;
-        }
+        .chip-text { cursor: text; min-width: 10px; outline: none; border-bottom: 1px dashed transparent; }
+        .chip-text:focus { border-bottom-color: currentColor; background: rgba(255,255,255,0.4); }
+        .chip-x { margin-left: 8px; cursor: pointer; background: rgba(0,0,0,0.05); color: inherit; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; justify-content: center; align-items: center; font-size: 10px; line-height: 1; }
+        .chip-x:hover { background: #e74c3c; color: white; }
+        .editor-container { border: 1px solid #eee; background: #fafafa; border-radius: 4px; padding: 10px 30px 10px 10px; min-height: 150px; margin-top: 10px; overflow: visible !important; position: relative; z-index: 10; }
         .ce-popover, .ce-toolbar__settings, .ce-conversion-toolbar { z-index: 99999 !important; }
         .editor-wrapper { display: block; }
         .editor-wrapper.hidden { display: none !important; }
-
         .header-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #eee; }
-        
         .import-area { background: #34495e; padding: 15px; border-radius: 6px; margin-bottom: 30px; }
         .import-area textarea { width: 100%; height: 50px; background: #2c3e50; border: 1px solid #465a6e; color: #fff; font-family: monospace; padding: 5px; border-radius: 4px; }
         .btn-load { background: #f1c40f; padding: 5px 15px; margin-top: 5px; color: #333; }
-
         #output { width: 100%; height: 200px; margin-top: 20px; background: #2c3e50; color: #ecf0f1; padding: 15px; font-family: monospace; border-radius: 6px; border: none; }
-        
-        /* Preview Styling */
+        .preview-wrapper { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 4px; border: 1px dashed #ddd; }
+        #preview { color:#555; font-style:italic; font-size:14px; flex-grow: 1; }
         #preview span.tag-link { color:#3498db; text-decoration:underline; font-weight:bold; }
         #preview span.tag-modal { color:#9b59b6; border-bottom:1px dotted #9b59b6; cursor:help; }
+        .partner-grid { display: grid; grid-template-columns: 1.5fr 80px 2fr 1.5fr 40px; gap: 10px; align-items: center; }
+        
+        /* SIMULATION CSS */
+        .sim-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); font-family: 'Segoe UI', sans-serif; }
+        .sim-chat-window { width: 380px; height: 600px; background: #f4f4f4; border-radius: 20px; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .sim-header { background: #fff; padding: 15px; border-bottom: 1px solid #ddd; font-weight: bold; display: flex; justify-content: space-between; }
+        .sim-body { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .sim-bubble { background: #fff; padding: 15px; border-radius: 12px 12px 12px 0; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sim-footer { background: #fff; padding: 15px; border-top: 1px solid #ddd; }
+        .sim-close { cursor: pointer; color: #e74c3c; font-size: 24px; line-height: 20px; }
+        .sim-btn-mock { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 25px; opacity: 0.5; cursor: not-allowed; }
+        .sim-btn-mock.active { opacity: 1; cursor: pointer; }
+        
+        /* SHARED CSS FOR SIMULATOR AND GENERATED CODE */
+        .sim-body .cc-wrapper, .cc-wrapper { display:flex; align-items:flex-start; margin:15px 0; width:100%; font-size:14px; line-height:1.5; color:#333; text-align:left; position: relative; }
+        .sim-body .cc-wrapper input, .cc-wrapper input { margin:3px 10px 0 0; cursor:pointer; flex: 0 0 auto; }
+        .sim-body .m-trg, .m-trg { color:#3498db!important; border-bottom:1px dotted #3498db; cursor:pointer; font-weight: 600; pointer-events: auto; }
+        .sim-body .m-trg:hover, .m-trg:hover { opacity:.8; }
+        .sim-body .mov, .mov { display:none; position:fixed; z-index:2147483647; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.6); align-items:center; justify-content:center; backdrop-filter:blur(2px); }
+        .sim-body .mbox, .mbox { background:#fff; margin:auto; width:90%; max-width:500px; max-height:80vh; border-radius:12px; position:relative; box-shadow:0 10px 25px rgba(0,0,0,.3); color:#333!important; text-align:left; display:flex; flex-direction:column; }
+        .sim-body .m-head, .m-head { flex:0 0 auto; padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+        .sim-body .m-body-content, .m-body { flex:1 1 auto; overflow-y:auto; padding:20px; font-size:13px; }
+        .sim-body .m-foot, .m-foot { flex:0 0 auto; padding:15px 20px; border-top:1px solid #eee; text-align:right; }
+        .sim-body .btn-ok, .btn-ok { background:#3498db; color:#fff; border:none; padding:8px 25px; border-radius:4px; cursor:pointer; font-weight:700; }
+        .sim-body .mcl, .mcl { font-size:28px; cursor:pointer; color:#aaa; line-height:1; }
+        .sim-body .mti, .mti { font-size:18px; font-weight:700; margin:0; color:#333!important; }
+        .sim-body .ptb, .ptb { width:100%; border-collapse:collapse; font-size:13px; }
+        .sim-body .ptb th, .ptb th { text-align:left; padding:10px; background:#f8f9fa; border-bottom:2px solid #ddd; color:#000!important; }
+        .sim-body .ptb td, .ptb td { padding:10px; border-bottom:1px solid #eee; color:#333!important; }
+        .sim-body .tln, .tln { color:#3498db; font-weight:600; text-decoration:none; }
+
+        #ctxMenu { display: none; position: absolute; z-index: 99999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); width: 150px; overflow: hidden; }
+        #ctxMenu div { padding: 10px; cursor: pointer; font-size: 13px; color: #333; }
+        #ctxMenu div:hover { background: #3498db; color: white; }
     </style>
 </head>
 <body>
 
+<div id="ctxMenu">
+    <div onclick="convertSelection('modal')">Make it a Modal</div>
+    <div onclick="convertSelection('link')">Make it a Link</div>
+</div>
+
 <div class="container">
-    <h1>Landbot Generator</h1>
-    <p class="subtitle">Drag & Drop Tokens. Editor.js. <b>Drop Anywhere Fixed.</b></p>
+    <h1>Landbot Generator (Center Screen Fix)</h1>
+    <p class="subtitle">Select text & Right Click. <b>Edit tokens inline.</b></p>
 
     <div class="import-area">
         <label style="color:#bdc3c7;font-size:12px;">Load Code:</label>
@@ -166,23 +131,21 @@
 
     <!-- 1. SENTENCE -->
     <h2>1. Sentence Editor</h2>
-    <!-- Added oninput to trigger preview updates when typing -->
-    <div class="sentence-editor" id="sentenceEditor" contenteditable="true" oninput="updatePreview()"></div>
-    <div id="preview" style="margin-top:10px; color:#888; font-style:italic; font-size:14px; padding:10px; border:1px dashed #eee;">Preview: ...</div>
+    <div class="sentence-editor" id="sentenceEditor" contenteditable="true" spellcheck="false"></div>
+    <div class="preview-wrapper"><div id="preview">Preview: ...</div><button class="btn-test" onclick="testIt()">Test It (Simulator)</button></div>
 
-    <!-- 2. LINKS -->
-    <h2>2. Links <button class="btn-add" onclick="addLinkItem()">+ Add Link</button></h2>
-    <div id="links-container"></div>
-
-    <!-- 3. MODALS -->
-    <h2>3. Modals <button class="btn-add" onclick="addModalItem()">+ Add Modal</button></h2>
-    <div id="modals-container"></div>
+    <!-- 2. LINKS & MODALS -->
+    <h2>2. Links</h2><div id="links-container"></div>
+    <h2>3. Modals</h2><div id="modals-container"></div>
 
     <!-- 4. PARTNERS -->
     <h2>4. Partners</h2>
     <div class="header-row">
-        <div><label>Header 1</label><input type="text" id="header1" class="form-control" value="Partenaire"></div>
-        <div><label>Header 2</label><input type="text" id="header2" class="form-control" value="Politique"></div>
+        <div><label>Header 1</label><input type="text" id="header1" class="form-control" value="Nombre de la Empresa"></div>
+        <div><label>Header 2</label><input type="text" id="header2" class="form-control" value="Política de Privacidad"></div>
+    </div>
+    <div style="font-size:11px; color:#999; margin-bottom:10px; display:grid; grid-template-columns: 1.5fr 80px 2fr 1.5fr 40px; padding:0 10px;">
+        <span>Name</span><span>Link?</span><span>Content</span><span>Label</span><span></span>
     </div>
     <div id="partners-container"></div>
     <button class="btn-add" onclick="addPartnerRow()">+ Add Partner</button>
@@ -193,435 +156,264 @@
 </div>
 
 <script>
-    let lCount = 0;
-    let mCount = 0;
-    const editorInstances = {}; 
+    let uniqueIdCounter = 0; let savedRange = null; const editorInstances = {}; 
 
     window.onload = function() {
-        if (typeof EditorJS === 'undefined') {
-            alert("Error: Scripts failed to load. Check internet.");
-            return;
-        }
+        if (typeof EditorJS === 'undefined') { alert("Error: Scripts failed to load."); return; }
         const editor = document.getElementById('sentenceEditor');
-        editor.innerText = "I accept the "; 
-        
-        // DROP LOGIC RESTORED (Precise Positioning)
-        editor.addEventListener('dragover', (e) => { e.preventDefault(); });
-        editor.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const type = e.dataTransfer.getData("token/type");
-            const id = e.dataTransfer.getData("token/id");
-            const isMove = e.dataTransfer.getData("token/move");
-
-            if (type && id) {
-                // If moving an existing chip inside the editor, remove the old one first
-                if (isMove === "true") {
-                    const old = document.querySelector(`.chip[data-uuid="${e.dataTransfer.getData("token/uuid")}"]`);
-                    if(old) old.remove();
-                }
-                // Insert at precise mouse location
-                insertChipAtCursor(type, id, e.clientX, e.clientY);
-                updatePreview();
+        editor.innerText = "I accept the privacy policy."; 
+        editor.addEventListener('contextmenu', (e) => {
+            const sel = window.getSelection();
+            if(sel.rangeCount > 0 && !sel.isCollapsed && editor.contains(sel.anchorNode)) {
+                e.preventDefault(); savedRange = sel.getRangeAt(0); 
+                const menu = document.getElementById('ctxMenu');
+                menu.style.display = 'block'; menu.style.left = e.pageX + 'px'; menu.style.top = e.pageY + 'px';
             }
         });
-
-        addPartnerRow("Example Partner", "https://example.com");
+        document.addEventListener('click', (e) => { document.getElementById('ctxMenu').style.display = 'none'; });
+        const observer = new MutationObserver(syncCardsWithEditor);
+        observer.observe(editor, { subtree: true, childList: true, characterData: true });
+        addPartnerRow("Example Partner", "https://example.com", true, "Ver política");
         updatePreview();
     };
 
-    // NEW FUNCTION: Inserts chip exactly where the mouse dropped
-    function insertChipAtCursor(type, id, x, y) {
-        const chip = document.createElement('span');
-        chip.className = `chip ${type}`;
-        chip.contentEditable = "false";
-        chip.innerText = `{${type}${id}}`;
-        chip.setAttribute('data-tag', `{${type}${id}}`);
-        chip.setAttribute('data-uuid', Date.now());
-        
-        chip.draggable = true;
-        chip.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData("token/type", type);
-            e.dataTransfer.setData("token/id", id);
-            e.dataTransfer.setData("token/move", "true");
-            e.dataTransfer.setData("token/uuid", chip.getAttribute('data-uuid'));
-        });
-
-        // CALCULATE RANGE FROM POINT
-        let range;
-        if (document.caretRangeFromPoint) {
-            range = document.caretRangeFromPoint(x, y);
-        } else if (document.caretPositionFromPoint) {
-            // Fallback for Firefox
-            const pos = document.caretPositionFromPoint(x, y);
-            range = document.createRange();
-            range.setStart(pos.offsetNode, pos.offset);
-            range.collapse(true);
+    function getUniqueId() { return Date.now() + Math.floor(Math.random() * 1000); }
+    function convertSelection(type) {
+        if(!savedRange) return;
+        const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+        const text = savedRange.toString(); const id = getUniqueId();
+        if(type === 'link') addLinkItem(id, text, ''); else addModalItem(id, text, 'Title ' + text);
+        document.execCommand('insertHTML', false, `<span class="chip ${type}" contenteditable="false" data-id="${id}" data-type="${type}"><span class="chip-text" contenteditable="true" onkeydown="preventEnter(event)" oninput="syncFromToken(this)">${text}</span><span class="chip-x" onclick="removeToken(this, ${id})">×</span></span>&nbsp;`);
+        savedRange = null; document.getElementById('ctxMenu').style.display = 'none'; updatePreview();
+    }
+    window.preventEnter = function(e) { if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); } }
+    window.syncFromToken = function(span) {
+        const chip = span.closest('.chip'); const id = chip.getAttribute('data-id'); const type = chip.getAttribute('data-type'); const newVal = span.innerText; 
+        const card = document.querySelector(`.card[data-id="${id}"]`);
+        if(card) {
+            const headerTitle = card.querySelector('.d-title'); if(headerTitle) headerTitle.innerText = newVal || "Untitled";
+            const selector = type === 'link' ? '.l-t' : '.m-w'; const input = card.querySelector(selector); if(input) input.value = newVal;
         }
-
-        if (range) {
-            range.insertNode(chip);
-            // Move cursor after the chip
-            range.setStartAfter(chip);
-            range.setEndAfter(chip);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        } else {
-            // Fallback if browser doesn't support range calc (rare)
-            document.getElementById('sentenceEditor').appendChild(chip);
-        }
+        updatePreview();
     }
-
-    // Fallback for simple programmatic insertion (e.g. from Import)
-    function insertChip(type, id) {
-        const chip = document.createElement('span');
-        chip.className = `chip ${type}`;
-        chip.contentEditable = "false";
-        chip.innerText = `{${type}${id}}`;
-        chip.setAttribute('data-tag', `{${type}${id}}`);
-        chip.setAttribute('data-uuid', Date.now());
-        
-        chip.draggable = true;
-        chip.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData("token/type", type);
-            e.dataTransfer.setData("token/id", id);
-            e.dataTransfer.setData("token/move", "true");
-            e.dataTransfer.setData("token/uuid", chip.getAttribute('data-uuid'));
-        });
-
-        document.getElementById('sentenceEditor').appendChild(chip);
+    function updateName(input) {
+        const val = input.value; const card = input.closest('.card'); const id = card.getAttribute('data-id');
+        card.querySelector('.d-title').innerText = val || "Untitled";
+        const chipText = document.querySelector(`.chip[data-id="${id}"] .chip-text`); if(chipText) chipText.innerText = val;
+        updatePreview();
     }
-
-    function ensureHttps(url) {
-        url = url.trim();
-        if(!url) return "#";
-        if(url.startsWith("http://") || url.startsWith("https://")) return url;
-        return "https://" + url;
+    function removeToken(el, id) {
+        const chip = el.closest('.chip'); chip.remove();
+        const card = document.querySelector(`.card[data-id="${id}"]`); if(card) card.remove();
     }
-
-    // --- BUILDERS ---
-
-    function addLinkItem(t='', u='') {
-        lCount++;
-        const id = lCount;
-        const div = document.createElement('div');
-        div.className = 'card link-c';
-        div.setAttribute('data-id', id);
-        div.innerHTML = `
-            <div class="card-header">
-                <div class="drag-area" draggable="true" ondragstart="startDragToken(event, 'link', ${id})">
-                    <span class="drag-icon">☰</span>
-                    <span class="token-badge link" title="Drag me">{link${id}}</span>
-                </div>
-                <button class="btn-remove" onclick="remItem(this)">Remove</button>
-            </div>
-            <div class="card-body">
-                <div class="input-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div><label>Link Text</label><input type="text" class="form-control l-t" value="${t}" oninput="updatePreview()"></div>
-                    <div><label>URL</label><input type="text" class="form-control l-u" value="${u}"></div>
-                </div>
-            </div>
-        `;
+    function syncCardsWithEditor() {
+        const presentIds = []; document.querySelectorAll('#sentenceEditor .chip').forEach(chip => { presentIds.push(chip.getAttribute('data-id')); });
+        document.querySelectorAll('.card[data-id]').forEach(card => { const cId = card.getAttribute('data-id'); if(presentIds.includes(cId)) card.classList.remove('card-hidden'); else card.classList.add('card-hidden'); });
+        updatePreview();
+    }
+    function safeVal(str) { return str ? str.replace(/"/g, '&quot;') : ""; }
+    function addLinkItem(id, t='', u='') {
+        const div = document.createElement('div'); div.className = 'card link-c'; div.setAttribute('data-id', id);
+        div.innerHTML = `<div class="card-header"><span class="card-title-badge">LINK: <b class="d-title">${t||`Link ${id}`}</b></span><button class="btn-remove" onclick="remItem(this)">Delete</button></div><div class="card-body"><div class="input-grid" style="grid-template-columns: 1fr 1fr;"><div><label>Link Text</label><input type="text" class="form-control l-t" value="${safeVal(t)}" oninput="updateName(this)"></div><div><label>URL</label><input type="text" class="form-control l-u" value="${safeVal(u)}"></div></div></div>`;
         document.getElementById('links-container').appendChild(div);
-        updatePreview();
-        return div;
     }
-
-    function addModalItem(w='', ti='', ty='text', blocks=null) {
-        mCount++;
-        const id = mCount;
-        const div = document.createElement('div');
-        div.className = 'card modal-c';
-        div.setAttribute('data-id', id);
-        
-        const isTable = ty === 'table';
-        const editorId = `editorjs-${id}`;
-
-        div.innerHTML = `
-            <div class="card-header">
-                <div class="drag-area" draggable="true" ondragstart="startDragToken(event, 'modal', ${id})">
-                    <span class="drag-icon">☰</span>
-                    <span class="token-badge modal" title="Drag me">{modal${id}}</span>
-                </div>
-                <button class="btn-remove" onclick="remItem(this)">Remove</button>
-            </div>
-            <div class="card-body">
-                <div class="input-grid">
-                    <div><label>Trigger Word</label><input type="text" class="form-control m-w" value="${w}" oninput="updatePreview()"></div>
-                    <div><label>Modal Title</label><input type="text" class="form-control m-ti" value="${ti}"></div>
-                    <div>
-                        <label>Content Type</label>
-                        <select class="form-control m-ty" onchange="toggleModalContent(this, '${editorId}')">
-                            <option value="text" ${!isTable?'selected':''}>Rich Editor</option>
-                            <option value="table" ${isTable?'selected':''}>Partners Table</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="editor-wrapper ${isTable ? 'hidden' : ''}">
-                    <div id="${editorId}" class="editor-container"></div>
-                </div>
-            </div>
-        `;
-        
+    function addModalItem(id, w='', ti='', ty='text', blocks=null) {
+        const div = document.createElement('div'); div.className = 'card modal-c'; div.setAttribute('data-id', id); const isTable = ty === 'table'; const editorId = `editorjs-${id}`;
+        div.innerHTML = `<div class="card-header"><span class="card-title-badge">MODAL: <b class="d-title">${w||`Modal ${id}`}</b></span><button class="btn-remove" onclick="remItem(this)">Delete</button></div><div class="card-body"><div class="input-grid"><div><label>Trigger Word</label><input type="text" class="form-control m-w" value="${safeVal(w)}" oninput="updateName(this)"></div><div><label>Modal Title</label><input type="text" class="form-control m-ti" value="${safeVal(ti)}"></div><div><label>Content Type</label><select class="form-control m-ty" onchange="toggleModalContent(this, '${editorId}')"><option value="text" ${!isTable?'selected':''}>Rich Editor</option><option value="table" ${isTable?'selected':''}>Partners Table</option></select></div></div><div class="editor-wrapper ${isTable ? 'hidden' : ''}"><div id="${editorId}" class="editor-container"></div></div></div>`;
         document.getElementById('modals-container').appendChild(div);
-        
-        try {
-            const editor = new EditorJS({
-                holder: editorId,
-                placeholder: 'Click here to type content...',
-                tools: { header: Header, list: List, checklist: Checklist, quote: Quote, warning: Warning, delimiter: Delimiter, table: Table, marker: Marker },
-                data: blocks ? { blocks: blocks } : {},
-                minHeight: 50
-            });
-            editorInstances[id] = editor;
-        } catch (e) { console.error("EditorJS Error", e); }
-
-        updatePreview();
-        return div;
+        try { editorInstances[id] = new EditorJS({ holder: editorId, tools: { header: Header, list: List, checklist: Checklist, quote: Quote, warning: Warning, delimiter: Delimiter, table: Table, marker: Marker }, data: blocks ? { blocks: blocks } : {}, minHeight: 50 }); } catch (e) { console.error("EditorJS Error", e); }
     }
-
-    function startDragToken(e, type, id) {
-        e.dataTransfer.setData("token/type", type);
-        e.dataTransfer.setData("token/id", id);
-        e.dataTransfer.setData("token/move", "false");
-    }
-
-    function toggleModalContent(select) {
-        const card = select.closest('.card');
-        const area = card.querySelector('.editor-wrapper');
-        if (select.value === 'table') {
-            area.classList.add('hidden');
-        } else {
-            area.classList.remove('hidden');
-        }
-    }
-
-    function addPartnerRow(n="", u="") {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.style.marginBottom = "10px";
-        div.innerHTML = `
-            <div style="display:flex; gap:10px; padding:10px; align-items:center;">
-                <div style="flex:1"><input type="text" class="form-control p-n" value="${n}" placeholder="Name"></div>
-                <div style="flex:1"><input type="text" class="form-control p-u" value="${u}" placeholder="URL"></div>
-                <button class="btn-remove" onclick="this.closest('.card').remove()">X</button>
-            </div>
-        `;
+    function toggleModalContent(select) { const card = select.closest('.card'); const area = card.querySelector('.editor-wrapper'); if (select.value === 'table') area.classList.add('hidden'); else area.classList.remove('hidden'); }
+    function addPartnerRow(n="", val="", isLink=true, txt="Ver política") {
+        const div = document.createElement('div'); div.className = 'card'; div.style.marginBottom = "10px";
+        div.innerHTML = `<div class="partner-grid" style="padding:10px;"><input type="text" class="form-control p-n" value="${safeVal(n)}" placeholder="Name"><div class="toggle-wrapper"><label class="switch"><input type="checkbox" class="p-check" ${isLink ? 'checked' : ''} onchange="togglePartnerInputs(this)"><span class="slider"></span></label></div><input type="text" class="form-control p-val" value="${safeVal(val)}" placeholder="${isLink?'https://...':'Plain Text info'}"><input type="text" class="form-control p-txt" value="${safeVal(txt)}" placeholder="Label" style="display:${isLink?'block':'none'}"><button class="btn-remove" onclick="this.closest('.card').remove()">X</button></div>`;
         document.getElementById('partners-container').appendChild(div);
     }
-
-    function remItem(btn) { 
-        const card = btn.closest('.card');
-        const id = card.getAttribute('data-id');
-        const type = card.classList.contains('link-c') ? 'link' : 'modal';
-        card.remove();
-        if(type === 'modal' && editorInstances[id]) delete editorInstances[id];
-        document.querySelectorAll(`.chip[data-tag="{${type}${id}}"]`).forEach(t => t.remove());
-        updatePreview(); 
-    }
-
+    function togglePartnerInputs(checkbox) { const row = checkbox.closest('.partner-grid'); const valInput = row.querySelector('.p-val'); const txtInput = row.querySelector('.p-txt'); if (checkbox.checked) { valInput.placeholder = "https://..."; txtInput.style.display = "block"; } else { valInput.placeholder = "Plain Text info"; txtInput.style.display = "none"; } }
+    function remItem(btn) { const card = btn.closest('.card'); const id = card.getAttribute('data-id'); card.remove(); if(editorInstances[id]) delete editorInstances[id]; const chip = document.querySelector(`.chip[data-id="${id}"]`); if(chip) chip.remove(); updatePreview(); }
     function getEditorContent() {
-        const editor = document.getElementById('sentenceEditor');
-        let text = "";
-        editor.childNodes.forEach(node => {
-            if(node.nodeType === 3) text += node.textContent;
-            else if(node.nodeType === 1) {
-                if(node.classList.contains('chip')) text += node.getAttribute('data-tag');
-                else if(node.tagName !== 'BR') text += node.innerText; 
-            }
-        });
+        const editor = document.getElementById('sentenceEditor'); let text = "";
+        editor.childNodes.forEach(node => { if(node.nodeType === 3) text += node.textContent; else if(node.nodeType === 1) { if(node.classList.contains('chip')) text += `{${node.getAttribute('data-type')}${node.getAttribute('data-id')}}`; else if(node.tagName !== 'BR') text += node.innerText; } });
         return text;
     }
-
-    // --- PREVIEW FUNCTION ---
+    function ensureHttps(url) { url = url.trim(); if(!url) return "#"; if(url.startsWith("http://") || url.startsWith("https://")) return url; return "https://" + url; }
     function updatePreview() {
-        let t = getEditorContent();
-        if(!t) { document.getElementById('preview').innerHTML="Preview: ..."; return; }
-        
-        // Replace Links using the INPUT value
-        t = t.replace(/{link(\d+)}/g, function(match, id) {
-            const card = document.querySelector(`.card.link-c[data-id="${id}"]`);
-            const text = card ? card.querySelector('.l-t').value : '';
-            const display = text.trim() !== '' ? text : `Link${id}`;
-            return `<span class="tag-link">${display}</span>`;
-        });
-
-        // Replace Modals using the INPUT value
-        t = t.replace(/{modal(\d+)}/g, function(match, id) {
-            const card = document.querySelector(`.card.modal-c[data-id="${id}"]`);
-            const text = card ? card.querySelector('.m-w').value : '';
-            const display = text.trim() !== '' ? text : `Modal${id}`;
-            return `<span class="tag-modal">${display}</span>`;
-        });
-
+        let t = getEditorContent(); if(!t) { document.getElementById('preview').innerHTML="Preview: ..."; return; }
+        t = t.replace(/{link(\d+)}/g, (m, id) => { const c = document.querySelector(`.card.link-c[data-id="${id}"]`); return c && !c.classList.contains('card-hidden') ? `<span class="tag-link">${c.querySelector('.l-t').value||`Link${id}`}</span>` : ""; });
+        t = t.replace(/{modal(\d+)}/g, (m, id) => { const c = document.querySelector(`.card.modal-c[data-id="${id}"]`); return c && !c.classList.contains('card-hidden') ? `<span class="tag-modal">${c.querySelector('.m-w').value||`Modal${id}`}</span>` : ""; });
         document.getElementById('preview').innerHTML = "Preview: " + t;
     }
-
-    function blocksToHtml(blocks) {
-        if(!blocks) return "";
-        let html = "";
-        blocks.forEach(block => {
-            switch (block.type) {
-                case 'header': html += `<h${block.data.level} style="margin:10px 0;font-weight:bold;color:#333;">${block.data.text}</h${block.data.level}>`; break;
-                case 'paragraph': html += `<p style="margin-bottom:10px;">${block.data.text}</p>`; break;
-                case 'list':
-                    const tag = block.data.style === 'ordered' ? 'ol' : 'ul';
-                    const items = block.data.items.map(i => `<li>${i}</li>`).join('');
-                    html += `<${tag} style="padding-left:20px;margin-bottom:10px;">${items}</${tag}>`;
-                    break;
-                case 'checklist':
-                    const checks = block.data.items.map(i => `<div style="display:flex;align-items:center;margin-bottom:5px;"><input type="checkbox" ${i.checked?'checked':''} disabled style="margin-right:8px;"><span>${i.text}</span></div>`).join('');
-                    html += `<div style="margin-bottom:10px;">${checks}</div>`;
-                    break;
-                case 'delimiter': html += `<hr style="border:0;border-top:1px solid #eee;margin:20px 0;">`; break;
-                case 'warning': html += `<div style="background:#fff3cd;border:1px solid #ffeeba;padding:10px;border-radius:4px;margin-bottom:10px;"><strong>${block.data.title}</strong><br>${block.data.message}</div>`; break;
-                case 'quote': html += `<blockquote style="border-left:4px solid #ccc;padding-left:10px;margin:10px 0;font-style:italic;">${block.data.text}<br><small>- ${block.data.caption}</small></blockquote>`; break;
-                case 'table':
-                    if(block.data.content && block.data.content.length) {
-                        let rows = block.data.content.map(row => `<tr>${row.map(cell => `<td style="border:1px solid #ddd;padding:5px;">${cell}</td>`).join('')}</tr>`).join('');
-                        html += `<table style="width:100%;border-collapse:collapse;margin-bottom:10px;">${rows}</table>`;
-                    }
-                    break;
-                case 'marker': html += `<mark style="background:#fcf8e3;padding:0 3px;">${block.data.text}</mark>`; break;
-            }
-        });
-        return html.replace(/http:\/\//g, "https://");
+    async function generateCode() { const data = await gatherData(); const script = buildScript(data); document.getElementById('output').value = script; }
+    async function gatherData() {
+        const rawTemplate = getEditorContent(); const activeCards = Array.from(document.querySelectorAll('.card:not(.card-hidden)'));
+        const h1 = document.getElementById('header1').value; const h2 = document.getElementById('header2').value;
+        const partners = []; document.querySelectorAll('#partners-container .partner-grid').forEach(row => { const n = row.querySelector('.p-n').value.trim(); const isLink = row.querySelector('.p-check').checked; let val = row.querySelector('.p-val').value.trim(); const txt = row.querySelector('.p-txt').value.trim(); if(n) { if(isLink) val = ensureHttps(val); partners.push({ name: n, val: val, isLink: isLink, txt: txt }); } });
+        const modals = []; const links = [];
+        for (const c of activeCards) {
+            const id = c.getAttribute('data-id');
+            if(c.classList.contains('modal-c')) {
+                const ty = c.querySelector('.m-ty').value; let contentHtml = ""; let rawBlocks = [];
+                if (ty === 'text' && editorInstances[id]) { try { const savedData = await editorInstances[id].save(); rawBlocks = savedData.blocks; contentHtml = blocksToHtml(rawBlocks); } catch(e) {} }
+                modals.push({ id: id, w: c.querySelector('.m-w').value, ti: c.querySelector('.m-ti').value, type: ty, content: contentHtml, blocks: rawBlocks });
+            } else if (c.classList.contains('link-c')) { let u = c.querySelector('.l-u').value.trim(); u = ensureHttps(u); links.push({ id: id, t: c.querySelector('.l-t').value, u: u }); }
+        }
+        let template = rawTemplate.replace(/"/g, '&quot;');
+        return { rawTemplate, template, h1, h2, partners, modals, links };
     }
 
-    async function generateCode() {
-        const rawTemplate = getEditorContent();
-        const template = rawTemplate.replace(/"/g, '&quot;');
-        const h1 = document.getElementById('header1').value;
-        const h2 = document.getElementById('header2').value;
-
-        const partners = [];
-        document.querySelectorAll('#partners-container input.p-n').forEach(i => {
-            const row = i.closest('div').parentElement;
-            const n = i.value.trim();
-            let u = row.querySelector('.p-u').value.trim();
-            if(n) { u = ensureHttps(u); partners.push({name:n, url:u}); }
-        });
-
-        const modals = [];
-        const modalCards = document.querySelectorAll('.modal-c');
-        
-        for (const c of modalCards) {
-            const id = c.getAttribute('data-id');
-            const ty = c.querySelector('.m-ty').value;
-            let contentHtml = "";
-            let rawBlocks = [];
-
-            if (ty === 'text' && editorInstances[id]) {
-                try {
-                    const savedData = await editorInstances[id].save();
-                    rawBlocks = savedData.blocks;
-                    contentHtml = blocksToHtml(rawBlocks);
-                } catch(e) { console.error("Save failed", e); }
-            }
-
-            modals.push({
-                id: id,
-                w: c.querySelector('.m-w').value,
-                ti: c.querySelector('.m-ti').value,
-                ty: ty,
-                c: contentHtml,
-                blocks: rawBlocks
-            });
-        }
-
-        const links = [];
-        document.querySelectorAll('.link-c').forEach(c => {
-            let u = c.querySelector('.l-u').value.trim();
-            u = ensureHttps(u);
-            links.push({
-                id: c.getAttribute('data-id'),
-                t: c.querySelector('.l-t').value,
-                u: u 
-            });
-        });
-
-        const config = { template: rawTemplate, partners, modals, links, headers: {col1: h1, col2: h2} };
-
-        let h = template;
-        links.forEach(l => {
-            h = h.replace(new RegExp(`{link${l.id}}`, 'g'), `<a href='${l.u}' target='_blank' class='l-lnk'>${l.t}</a>`);
-        });
-        modals.forEach(m => {
-            h = h.replace(new RegExp(`{modal${m.id}}`, 'g'), `<span class='m-trg' onclick='window.oMod(${m.id})'>${m.w}</span>`);
-        });
+    // --- KEY FIX: INJECT INTO DOCUMENT BODY, NOT WRAPPER ---
+    function buildScript(data) {
+        let h = data.template;
+        data.links.forEach(l => { h = h.replace(new RegExp(`{link${l.id}}`, 'g'), `<a href='${l.u}' target='_blank' class='tln'>${l.t}</a>`); });
+        data.modals.forEach(m => { h = h.replace(new RegExp(`{modal${m.id}}`, 'g'), `<span class='m-trg open-modal-trigger' data-modal-id='${m.id}'>${m.w}</span>`); });
         h = h.replace(/"/g, '\\"').replace(/\n/g, ' ');
 
-        const script = `<script>
+        const config = { template: data.rawTemplate, partners: data.partners, modals: data.modals, links: data.links, headers: {col1: data.h1, col2: data.h2} };
+        
+        const cssStyles = `
+    .cc-wrapper { display:flex; align-items:flex-start; margin:15px 0; width:100%; font-size:14px; line-height:1.5; color:#333; text-align:left; position: relative; }
+    .cc-wrapper input { margin:3px 10px 0 0; cursor:pointer; flex: 0 0 auto; }
+    .m-trg { color:#3498db!important; border-bottom:1px dotted #3498db; cursor:pointer; font-weight: 600; pointer-events: auto; }
+    .m-trg:hover { opacity:.8; }
+    .mov { display:none; position:fixed; z-index:2147483647; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.6); align-items:center; justify-content:center; backdrop-filter:blur(2px); }
+    .mbox { background:#fff; margin:auto; width:90%; max-width:500px; max-height:80vh; border-radius:12px; position:relative; box-shadow:0 10px 25px rgba(0,0,0,.3); color:#333!important; text-align:left; display:flex; flex-direction:column; }
+    .m-head { flex:0 0 auto; padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+    .m-body { flex:1 1 auto; overflow-y:auto; padding:20px; font-size:13px; }
+    .m-foot { flex:0 0 auto; padding:15px 20px; border-top:1px solid #eee; text-align:right; }
+    .btn-ok { background:#3498db; color:#fff; border:none; padding:8px 25px; border-radius:4px; cursor:pointer; font-weight:700; }
+    .mcl { font-size:28px; cursor:pointer; color:#aaa; line-height:1; }
+    .mti { font-size:18px; font-weight:700; margin:0; color:#333!important; }
+    .ptb { width:100%; border-collapse:collapse; font-size:13px; }
+    .ptb th { text-align:left; padding:10px; background:#f8f9fa; border-bottom:2px solid #ddd; color:#000!important; }
+    .ptb td { padding:10px; border-bottom:1px solid #eee; color:#333!important; }
+    .tln { color:#3498db; font-weight:600; text-decoration:none; }`;
+
+        return `<script>
 /* Cfg:${JSON.stringify(config)} */
-const pD=${JSON.stringify(partners)};
-const mD=${JSON.stringify(modals.map(m => ({...m, blocks: []})))};
-const st=\`.cc{display:flex;align-items:flex-start;margin:15px 0;width:100%;font-size:14px;line-height:1.5}.cc input{margin:3px 10px 0 0;cursor:pointer}.l-lnk{color:#3498db!important;text-decoration:underline!important;font-weight:700;cursor:pointer}.m-trg{color:#3498db!important;border-bottom:1px dotted #3498db;cursor:pointer}.m-trg:hover{opacity:.8}.mov{display:none;position:fixed;z-index:2147483647;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.6);align-items:center;justify-content:center;backdrop-filter:blur(2px)}.mbox{background:#fff;margin:auto;width:90%;max-width:500px;max-height:80vh;border-radius:12px;position:relative;animation:fi .3s;box-shadow:0 10px 25px rgba(0,0,0,.3);color:#333!important;text-align:left;display:flex;flex-direction:column}.m-head{flex:0 0 auto;padding:15px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}.m-body{flex:1 1 auto;overflow-y:auto;padding:20px}.m-foot{flex:0 0 auto;padding:15px 20px;border-top:1px solid #eee;text-align:right}.btn-ok{background:#3498db;color:#fff;border:none;padding:8px 25px;border-radius:4px;cursor:pointer;font-weight:700}.btn-ok:hover{opacity:.9}.mcl{font-size:28px;cursor:pointer;color:#aaa;line-height:1}.mti{font-size:18px;font-weight:700;margin-bottom:15px;display:block;color:#333!important;margin:0}.ptb{width:100%;border-collapse:collapse;font-size:13px}.ptb th{text-align:left;padding:10px;background:#f8f9fa;border-bottom:2px solid #ddd;color:#000!important}.ptb td{padding:10px;border-bottom:1px solid #eee;color:#333!important}.tln{color:#3498db;font-weight:600;text-decoration:none}@keyframes fi{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}\`;
-function aSt(){const o=document.getElementById('cps');if(o)o.remove();const s=document.createElement("style");s.id='cps';s.innerText=st;document.head.appendChild(s)}
-function gTb(){return \`<table class="ptb"><thead><tr><th>${h1}</th><th style="text-align:right">${h2}</th></tr></thead><tbody>\${pD.map(p=>\`<tr><td>\${p.name}</td><td style="text-align:right"><a href="\${p.url}" target="_blank" class="tln">Voir</a></td></tr>\`).join('')}</tbody></table>\`}
-window.oMod=function(id){const c=mD.find(m=>m.id==id);if(!c)return;const e=document.getElementById('apm');if(e)e.remove();let b=c.c;if(c.ty==='table')b+=gTb();document.body.insertAdjacentHTML('beforeend',\`<div id="apm" class="mov" style="display:flex"><div class="mbox"><div class="m-head"><span class="mti">\${c.ti}</span><span class="mcl" onclick="window.cMod()">&times;</span></div><div class="m-body">\${b}</div><div class="m-foot"><button class="btn-ok" onclick="window.cMod()">OK</button></div></div></div>\`)}
-window.cMod=function(){const e=document.getElementById('apm');if(e)e.remove()}
-const hCk=(e)=>{let b=document.querySelector("form button[type='submit']")||document.querySelector("form button");if(b)b.disabled=!e.target.checked}
-const sF=(id)=>{let f=document.querySelector("form");if(f){if(f.querySelector('.cc')){clearInterval(id);return}let b=f.querySelector("button[type='submit']")||f.querySelector("button");if(b)b.disabled=true;var d=document.createElement("div");d.className="cc";var l=document.createElement("label");l.htmlFor="pci";l.innerHTML="${h}";var c=document.createElement("INPUT");c.type="checkbox";c.id="pci";c.onclick=hCk;d.appendChild(c);d.appendChild(l);if(b){let p=b;if(b.parentNode&&b.parentNode.tagName!=='FORM')p=b.parentNode;p.parentNode.insertBefore(d,p)}else{f.appendChild(d)}clearInterval(id)}}
-aSt();window.selectFormFunction=()=>{var id=setInterval(()=>{sF(id)},500)}
+const partners = ${JSON.stringify(data.partners)};
+const modalContent = ${JSON.stringify(data.modals.map(m => ({id: m.id, title: m.ti, type: m.type, content: m.content})))};
+const cssStyles = \`${cssStyles}\`;
+
+function generateTable() {
+    return \`<table class="ptb"><thead><tr><th>${data.h1}</th><th style="text-align:right">${data.h2}</th></tr></thead><tbody>\${partners.map(p => {
+        let link = p.isLink ? \`<a href="\${p.val}" target="_blank" class="tln">\${p.txt || 'Ver'}</a>\` : p.val;
+        return \`<tr><td>\${p.name}</td><td style="text-align:right">\${link}</td></tr>\`;
+    }).join('')}</tbody></table>\`;
+}
+
+const selectForm = (intervalId) => {
+    let form = this.window.document.querySelector("form");
+    if (form) {
+        if (form.querySelector('.cc-wrapper')) { clearInterval(intervalId); return; }
+        
+        // 1. Inject CSS into Main Page HEAD (So Modal in Body sees it)
+        if(!document.getElementById('landbot-pps')) {
+            let styleTag = document.createElement("style");
+            styleTag.id = 'landbot-pps';
+            styleTag.innerText = cssStyles;
+            document.head.appendChild(styleTag);
+        }
+
+        let btn = form.querySelector("button[type='submit']") || form.querySelector("button");
+        if (btn) btn.disabled = true;
+
+        let wrapper = document.createElement("div");
+        wrapper.className = "cc-wrapper";
+        // Also inject style locally for the checkbox wrapper inside Shadow DOM
+        let localStyle = document.createElement("style");
+        localStyle.innerText = cssStyles;
+        wrapper.appendChild(localStyle);
+
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = "privacy-check";
+        checkbox.onclick = (e) => { if (btn) btn.disabled = !e.target.checked; };
+        wrapper.appendChild(checkbox);
+
+        let label = document.createElement("label");
+        label.htmlFor = "privacy-check";
+        label.innerHTML = "${h}";
+        wrapper.appendChild(label);
+
+        if (btn && btn.parentNode) {
+            if (btn.parentNode.tagName !== 'FORM') btn.parentNode.parentNode.insertBefore(wrapper, btn.parentNode);
+            else form.insertBefore(wrapper, btn);
+        } else { form.appendChild(wrapper); }
+
+        const openModal = (id) => {
+            const data = modalContent.find(m => m.id == id);
+            if (!data) return;
+            // Remove existing modals from BODY (Global)
+            let existing = document.getElementById('apm');
+            if (existing) existing.remove();
+
+            let content = data.content;
+            if (data.type === 'table') content += generateTable();
+            
+            let modalHtml = \`<div id="apm" class="mov" style="display:flex"><div class="mbox"><div class="m-head"><span class="mti">\${data.title}</span><span class="mcl" id="close-x">&times;</span></div><div class="m-body">\${content}</div><div class="m-foot"><button class="btn-ok" id="close-btn">OK</button></div></div></div>\`;
+            
+            // INJECT INTO DOCUMENT BODY (OUTSIDE LANDBOT BOX)
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            setTimeout(() => {
+                document.getElementById('close-x').onclick = () => document.getElementById('apm').remove();
+                document.getElementById('close-btn').onclick = () => document.getElementById('apm').remove();
+            }, 100);
+        };
+        const triggers = wrapper.querySelectorAll('.open-modal-trigger');
+        triggers.forEach(trg => { trg.addEventListener('click', (e) => { e.preventDefault(); openModal(trg.getAttribute('data-modal-id')); }); });
+        clearInterval(intervalId);
+    }
+}
+window.selectFormFunction = () => { var id = setInterval(() => { selectForm(id); }, 500); }
 <\/script>`;
-        document.getElementById('output').value = script;
     }
 
+    async function testIt() {
+        const data = await gatherData(); let h = data.template;
+        data.links.forEach(l => { h = h.replace(new RegExp(`{link${l.id}}`, 'g'), `<a href='${l.u}' target='_blank' class='tln'>${l.t}</a>`); });
+        data.modals.forEach(m => { h = h.replace(new RegExp(`{modal${m.id}}`, 'g'), `<span class='m-trg open-modal-trigger' data-modal-id='${m.id}'>${m.w}</span>`); });
+        
+        const overlay = document.createElement('div'); overlay.className = 'sim-overlay';
+        overlay.innerHTML = `<div class="sim-chat-window"><div class="sim-header"><span>Chatbot Simulator</span><span class="sim-close" onclick="this.closest('.sim-overlay').remove()">×</span></div><div class="sim-body"><div class="sim-bubble">Hi!</div><div class="cc-wrapper"><input type="checkbox" id="sim-chk" onchange="toggleSimButton(this)"><label for="sim-chk">${h}</label></div></div><div class="sim-footer"><button class="sim-btn-mock" id="sim-btn">Submit</button></div></div>`;
+        document.body.appendChild(overlay);
+
+        const openSimModal = (id) => {
+            const m = data.modals.find(x => x.id == id); if(!m) return;
+            let content = m.content; if(m.type === 'table') content += `<table class="ptb"><thead><tr><th>${data.h1}</th><th style="text-align:right">${data.h2}</th></tr></thead><tbody>` + data.partners.map(p => `<tr><td>${p.name}</td><td style="text-align:right">${p.isLink?`<a href="${p.val}" target="_blank" class="tln">${p.txt||'Voir'}</a>`:p.val}</td></tr>`).join('') + `</tbody></table>`;
+            const modalHTML = `<div id="sim-apm" class="mov" style="display:flex; position:fixed;"><div class="mbox"><div class="m-head"><span class="mti">${m.ti}</span><span class="mcl" onclick="document.getElementById('sim-apm').remove()">&times;</span></div><div class="m-body-content">${content}</div><div class="m-foot"><button class="btn-ok" onclick="document.getElementById('sim-apm').remove()">OK</button></div></div></div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML); // SIMULATE GLOBAL INJECTION
+        }
+        overlay.querySelectorAll('.open-modal-trigger').forEach(trg => { trg.addEventListener('click', (e) => { e.preventDefault(); openSimModal(trg.getAttribute('data-modal-id')); }); });
+    }
+    window.toggleSimButton = function(chk) { const btn = document.getElementById('sim-btn'); if(chk.checked) btn.classList.add('active'); else btn.classList.remove('active'); }
     function importCode() {
         const raw = document.getElementById('importArea').value;
         try {
-            const m = raw.match(/Cfg:(.*?) \*\//);
-            if(!m) throw new Error();
-            const c = JSON.parse(m[1]);
-            
-            const editor = document.getElementById('sentenceEditor');
-            editor.innerHTML = ""; 
-            
-            const tokenRegex = /({(link|modal)(\d+)})/g;
-            const parts = c.template.split(tokenRegex);
-            
-            parts.forEach(part => {
-                if(!part) return;
+            const m = raw.match(/Cfg:(.*?) \*\//); if(!m) throw new Error(); const c = JSON.parse(m[1]);
+            const editor = document.getElementById('sentenceEditor'); editor.innerHTML = ""; 
+            c.template.split(/({(?:link|modal)\d+})/g).forEach(part => {
                 const match = part.match(/{(link|modal)(\d+)}/);
                 if(match) {
-                    const type = match[1];
-                    const id = match[2];
-                    insertChip(type, id);
-                } else if (part !== "link" && part !== "modal" && isNaN(parseInt(part))) {
-                    editor.appendChild(document.createTextNode(part));
-                }
+                    const type = match[1]; const id = match[2]; let label = "Token";
+                    if(type === 'link') { const l = c.links.find(x=>x.id==id); if(l) label = l.t; } else { const mo = c.modals.find(x=>x.id==id); if(mo) label = mo.w; }
+                    const chip = document.createElement('span'); chip.className = `chip ${type}`; chip.contentEditable = "false"; chip.setAttribute('data-id', id); chip.setAttribute('data-type', type);
+                    chip.innerHTML = `<span class="chip-text" contenteditable="true" onkeydown="preventEnter(event)" oninput="syncFromToken(this)">${label}</span><span class="chip-x" onclick="removeToken(this, ${id})">×</span>`;
+                    editor.appendChild(chip); editor.appendChild(document.createTextNode(" "));
+                } else if(part) editor.appendChild(document.createTextNode(part));
             });
-
-            if(c.headers) {
-                document.getElementById('header1').value = c.headers.col1;
-                document.getElementById('header2').value = c.headers.col2;
-            }
-
-            document.getElementById('partners-container').innerHTML = '';
-            c.partners.forEach(p => addPartnerRow(p.name, p.url));
-
-            document.getElementById('links-container').innerHTML = '';
-            lCount=0;
-            c.links.forEach(l => {
-                const d = addLinkItem(l.t, l.u);
-                d.setAttribute('data-id', l.id);
-                if(parseInt(l.id)>lCount) lCount=parseInt(l.id);
-            });
-
-            document.getElementById('modals-container').innerHTML = '';
-            mCount=0;
-            c.modals.forEach(m => {
-                const d = addModalItem(m.w, m.ti, m.ty, m.blocks);
-                d.setAttribute('data-id', m.id);
-                if(parseInt(m.id)>mCount) mCount=parseInt(m.id);
-            });
-            updatePreview();
-            alert("Loaded!");
+            document.getElementById('partners-container').innerHTML = ''; c.partners.forEach(p => { if(p.url && !p.val) { p.val = p.url; p.isLink = true; p.txt = "Voir"; } addPartnerRow(p.name, p.val, p.isLink, p.txt); });
+            document.getElementById('links-container').innerHTML = ''; c.links.forEach(l => { addLinkItem(l.id, l.t, l.u); });
+            document.getElementById('modals-container').innerHTML = ''; c.modals.forEach(m => { addModalItem(m.id, m.w, m.ti, m.type||m.ty, m.blocks); });
+            updatePreview(); alert("Loaded!");
         } catch(e) { console.error(e); alert("Error loading code."); }
     }
-
+    function blocksToHtml(blocks) { if(!blocks) return ""; let html = ""; blocks.forEach(b => { 
+        if(b.type==='paragraph') html+=`<p style="margin-bottom:10px">${b.data.text}</p>`; 
+        else if(b.type==='header') html+=`<h${b.data.level} style="margin:10px 0;font-weight:bold">${b.data.text}</h${b.data.level}>`;
+        else if(b.type==='list') { const t=b.data.style==='ordered'?'ol':'ul'; html+=`<${t} style="padding-left:20px;margin-bottom:10px">`+b.data.items.map(i=>`<li>${i}</li>`).join('')+`</${t}>`; }
+    }); return html.replace(/http:\/\//g, "https://"); }
     function copyToClipboard() { document.getElementById("output").select(); document.execCommand("copy"); }
 </script>
-
 </body>
 </html>
